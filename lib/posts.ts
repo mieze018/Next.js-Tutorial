@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import { GetServerSideProps } from 'next';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -54,7 +55,7 @@ export async function getSortedPostsDataFromDatabase() {
   return databaseClient.query('SELECT posts...')
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       // props for your component
@@ -67,9 +68,9 @@ export async function getServerSideProps(context) {
 function Profile() {
   const { data, error } = useSWR('/api/user', fetch);
 
-  if (error) return <div>failed to load</div>;
+  if (error) return <div>failed to load < /div>;
   if (!data) return <div>loading...</div>;
-  return <div>hello {data.name}!</div>;
+  return <div>hello { data.name } !</div>;
 }
 
 export function getAllPostIds() {
