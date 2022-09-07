@@ -41,3 +41,13 @@ export async function getSortedPostsDataFromApi() {
   const res = await fetch('..');
   return res.json();
 }
+
+import someDatabaseSDK from 'someDatabaseSDK'
+
+const databaseClient = someDatabaseSDK.createClient(...)
+
+export async function getSortedPostsDataFromDatabase() {
+  // Instead of the file system,
+  // fetch post data from a database
+  return databaseClient.query('SELECT posts...')
+}
