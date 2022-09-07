@@ -42,9 +42,9 @@ export async function getSortedPostsDataFromApi() {
   return res.json();
 }
 
-import someDatabaseSDK from 'someDatabaseSDK'
+// import someDatabaseSDK from 'someDatabaseSDK'
 
-const databaseClient = someDatabaseSDK.createClient(...)
+// const databaseClient = someDatabaseSDK.createClient(...)
 
 export async function getSortedPostsDataFromDatabase() {
   // Instead of the file system,
@@ -60,7 +60,7 @@ export async function getServerSideProps(context) {
   };
 }
 
-import useSWR from 'swr';
+// import useSWR from 'swr';
 
 function Profile() {
   const { data, error } = useSWR('/api/user', fetch);
@@ -93,4 +93,18 @@ export function getAllPostIds() {
       },
     };
   });
+}
+
+export function getPostData(id) {
+  const fullPath = path.join(postsDirectory, `${id}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+  // Use gray-matter to parse the post metadata section
+  const matterResult = matter(fileContents);
+
+  // Combine the data with the id
+  return {
+    id,
+    ...matterResult.data,
+  };
 }
