@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { remark } from 'remark';
+import html from 'remark-html';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -42,9 +44,9 @@ export async function getSortedPostsDataFromApi() {
   return res.json();
 }
 
-import someDatabaseSDK from 'someDatabaseSDK'
+// import someDatabaseSDK from 'someDatabaseSDK'
 
-const databaseClient = someDatabaseSDK.createClient(...)
+// const databaseClient = someDatabaseSDK.createClient(...)
 
 export async function getSortedPostsDataFromDatabase() {
   // Instead of the file system,
@@ -60,7 +62,7 @@ export async function getServerSideProps(context) {
   };
 }
 
-import useSWR from 'swr';
+// import useSWR from 'swr';
 
 function Profile() {
   const { data, error } = useSWR('/api/user', fetch);
@@ -68,4 +70,50 @@ function Profile() {
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
   return <div>hello {data.name}!</div>;
+}
+
+export function getAllPostIds() {
+  const fileNames = fs.readdirSync(postsDirectory);
+
+  // Returns an array that looks like this:
+  // [
+  //   {
+  //     params: {
+  //       id: 'ssg-ssr'
+  //     }
+  //   },
+  //   {
+  //     params: {
+  //       id: 'pre-rendering'
+  //     }
+  //   }
+  // ]
+  return fileNames.map((fileName) => {
+    return {
+      params: {
+        id: fileName.replace(/\.md$/, ''),
+      },
+    };
+  });
+}
+
+export async function getPostData(id) {
+  const fullPath = path.join(postsDirectory, `${id}.md`);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+  // Use gray-matter to parse the post metadata section
+  const matterResult = matter(fileContents);
+
+  // Use remark to convert markdown into HTML string
+  const processedContent = await remark()
+    .use(html)
+    .process(matterResult.content);
+  const contentHtml = processedContent.toString();
+
+  // Combine the data with the id and contentHtml
+  return {
+    id,
+    contentHtml,
+    ...matterResult.data,
+  };
 }
