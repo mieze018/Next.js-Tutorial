@@ -35,3 +35,9 @@ export function getSortedPostsData() {
     }
   });
 }
+export async function getSortedPostsDataFromApi() {
+  // Instead of the file system,
+  // fetch post data from an external API endpoint
+  const res = await fetch('..');
+  return res.json();
+}
