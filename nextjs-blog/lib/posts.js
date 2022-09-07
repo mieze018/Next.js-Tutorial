@@ -51,3 +51,11 @@ export async function getSortedPostsDataFromDatabase() {
   // fetch post data from a database
   return databaseClient.query('SELECT posts...')
 }
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      // props for your component
+    },
+  };
+}
